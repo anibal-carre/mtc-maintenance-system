@@ -14,23 +14,29 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(cuid())
-  name     String
-  username String  @unique
-  password String
-  isAdmin  Boolean @default(false)
+  id        String    @id @default(cuid())
+  name      String
+  username  String    @unique
+  password  String
+  isAdmin   Boolean   @default(false)
+  createdAt DateTime
+  updatedAt DateTime?
 }
 
 model Product {
-  id            String @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String
   quantity      Int
   buyQuantity   Int
   stockQuantity Int
+  createdAt     DateTime
+  updatedAt     DateTime?
 }
 
 model Key {
-  id   String @id @default(cuid())
-  key  String
-  door String
+  id        String    @id @default(cuid())
+  key       String
+  door      String
+  createdAt DateTime
+  updatedAt DateTime?
 }
