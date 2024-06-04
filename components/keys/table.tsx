@@ -29,7 +29,7 @@ export default async function KeysTable({
                   <div>
                     <div className="mb-2 flex items-center">
                       <Image
-                        src={"/mtc-logo.png"}
+                        src={"/key.png"}
                         className="mr-2 rounded-full"
                         width={28}
                         height={28}
@@ -69,7 +69,7 @@ export default async function KeysTable({
                 <th scope="col" className="px-3 py-5 font-medium">
                   Time
                 </th>
-                <th scope="col" className="px-6 py-5 font-medium">
+                <th scope="col" className="px-3 py-5 font-medium">
                   Actions
                 </th>
               </tr>
@@ -83,7 +83,7 @@ export default async function KeysTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
                       <Image
-                        src={"/mtc-logo.png"}
+                        src={"/key.png"}
                         className="rounded-full"
                         width={28}
                         height={28}
@@ -94,13 +94,14 @@ export default async function KeysTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">{key.door}</td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    <p>{formatDateToLocalDate(key.createdAt)}</p>
+                    {formatDateToLocalDate(key.createdAt)}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    <p>{formatDateToLocalTime(key.createdAt)}</p>
+                    {formatDateToLocalTime(key.createdAt)}
                   </td>
+
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex justify-end gap-3">
+                    <div className="flex gap-3">
                       <UpdateKey id={key.id} />
                       <DeleteKey id={key.id} />
                     </div>
