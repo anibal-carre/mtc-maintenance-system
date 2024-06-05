@@ -18,7 +18,7 @@ export async function fetchFilteredKeys(query: string, currentPage: number) {
         ],
       },
       orderBy: {
-        key: "asc",
+        key: "desc",
       },
       skip: offset,
       take: ITEMS_PER_PAGE,
@@ -72,5 +72,24 @@ export async function fetchKeysPages(query: string) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch total number of keys.");
+  }
+}
+
+export async function fetchKeyById(id: string) {
+  noStore();
+  try {
+    const key = await prisma.key.findUnique({
+      where: { id: id },
+    });
+
+    if (key) {
+      console.log(key);
+      return key;
+    } else {
+      console.log("Key not found");
+    }
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch invoice.");
   }
 }

@@ -35,15 +35,27 @@ export default async function KeysTable({
                         height={28}
                         alt={`${key.key}'s profile picture`}
                       />
-                      <p>{key.key}</p>
+                      <p>
+                        <span className="font-[500]">Key: </span>
+                        {key.key}
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-500">{key.door}</p>
+                    <p className="text-sm text-gray-500">
+                      <span className="font-[500]">Door: </span>
+                      {key.door}
+                    </p>
                   </div>
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
-                  <p>{formatDateToLocalDate(key.createdAt)}</p>
+                  <div className="flex flex-col">
+                    <span className="text-[12px]">Created At</span>
+                    <p>{formatDateToLocalDate(key.createdAt)}</p>
+                  </div>
 
-                  <p>{formatDateToLocalTime(key.createdAt)}</p>
+                  <div className="flex flex-col">
+                    <span className="text-[12px]">Updated At</span>
+                    <p>{formatDateToLocalDate(key.updatedAt as Date)}</p>
+                  </div>
 
                   <div className="flex justify-end gap-2">
                     <UpdateKey id={key.id} />
@@ -64,11 +76,13 @@ export default async function KeysTable({
                 </th>
 
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Date
+                  Created At
                 </th>
+
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Time
+                  Updated At
                 </th>
+
                 <th scope="col" className="px-3 py-5 font-medium">
                   Actions
                 </th>
@@ -96,9 +110,16 @@ export default async function KeysTable({
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatDateToLocalDate(key.createdAt)}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+
+                  {/** <td className="whitespace-nowrap px-3 py-3">
                     {formatDateToLocalTime(key.createdAt)}
+                  </td>*/}
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {formatDateToLocalDate(key.updatedAt as Date)}
                   </td>
+                  {/*<td className="whitespace-nowrap px-3 py-3">
+                    {formatDateToLocalTime(key.updatedAt as Date)}
+                  </td> */}
 
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex gap-3">

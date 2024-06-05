@@ -34,9 +34,9 @@ model Product {
 }
 
 model Key {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   key       String
   door      String
   createdAt DateTime
-  updatedAt DateTime?
+  updatedAt DateTime
 }
