@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "./db";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -118,4 +119,105 @@ export async function deleteKey(id: string) {
   } catch (error) {
     return { message: "Database Error: Failed to Delete Key." };
   }
+}
+
+export async function deleteUser(id: string) {
+  // Simulate an error
+  //throw new Error('Failed to Delete Invoice');
+  try {
+    await db.user.delete({
+      where: {
+        id,
+      },
+    });
+    revalidatePath("/dashboard/users");
+    return { message: "Deleted User." };
+  } catch (error) {
+    return { message: "Database Error: Failed to Delete User." };
+  }
+}
+
+export const getUserByUsername = async (username: string) => {
+  try {
+    const user = await db.user.findUnique({ where: { username } });
+    return user;
+  } catch (error) {}
+};
+
+const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  username: z.string(),
+  password: z.string(),
+  isAdmin: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+const createUserSchema = UserSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export async function createUser(formData: FormData) {
+  const validatedFields = createUserSchema.safeParse({
+    name: formData.get("name"),
+    username: formData.get("username"),
+    password: formData.get("password"),
+    isAdmin: formData.get("isAdmin"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Create User.",
+    };
+  }
+
+  const { name, username, password, isAdmin } = validatedFields.data;
+
+  const rol = isAdmin == "Admin" ? true : false;
+
+  const createdAt = new Date();
+  const updatedAt = new Date();
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const existingUser = await getUserByUsername(username);
+
+  if (existingUser) {
+    return { error: "Username already in use" };
+  }
+
+  console.log({
+    name,
+    username,
+    hashedPassword,
+    rol,
+    createdAt,
+    updatedAt,
+  });
+
+  //const rawFormData = Object.fromEntries(formData.entries())
+
+  try {
+    await prisma.user.create({
+      data: {
+        name,
+        username,
+        password: hashedPassword,
+        isAdmin: rol,
+        createdAt,
+        updatedAt,
+      },
+    });
+  } catch (error) {
+    return {
+      message: "Database Error: Failed to Create User.",
+    };
+  }
+
+  revalidatePath("/dashboard/users");
+  redirect("/dashboard/users");
 }

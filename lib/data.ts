@@ -93,3 +93,75 @@ export async function fetchKeyById(id: string) {
     throw new Error("Failed to fetch invoice.");
   }
 }
+
+export async function fetchUsersPages(query: string) {
+  noStore();
+
+  try {
+    const count = await prisma.user.count({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: query,
+              mode: "insensitive", // ILIKE equivalente en Prisma
+            },
+          },
+          {
+            username: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            createdAt: {
+              gte: isNaN(Date.parse(query)) ? undefined : new Date(query),
+              lte: isNaN(Date.parse(query)) ? undefined : new Date(query),
+            },
+          },
+          {
+            updatedAt: {
+              gte: isNaN(Date.parse(query)) ? undefined : new Date(query),
+              lte: isNaN(Date.parse(query)) ? undefined : new Date(query),
+            },
+          },
+        ],
+      },
+    });
+
+    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of users.");
+  }
+}
+
+export async function fetchFilteredUsers(query: string, currentPage: number) {
+  noStore();
+
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { username: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      orderBy: {
+        name: "desc",
+      },
+      skip: offset,
+      take: ITEMS_PER_PAGE,
+    });
+
+    return users;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch users.");
+  } finally {
+    await prisma.$disconnect();
+  }
+}
