@@ -165,3 +165,19 @@ export async function fetchFilteredUsers(query: string, currentPage: number) {
     await prisma.$disconnect();
   }
 }
+
+export const getUserById = async (id: string) => {
+  try {
+    const findUser = await prisma.user.findUnique({ where: { id } });
+
+    const user = {
+      id: findUser?.id,
+      name: findUser?.name,
+      username: findUser?.username,
+      isAdmin: findUser?.isAdmin,
+      createdAt: findUser?.createdAt,
+      updatedAt: findUser?.updatedAt,
+    };
+    return user;
+  } catch (error) {}
+};

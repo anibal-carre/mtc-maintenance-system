@@ -13,3 +13,13 @@ export type KeyForm = {
   createdAt: Date;
   updatedAt: Date | null;
 };
+
+export type User = {
+  id: string;
+  name: string;
+  username: string;
+  password: string;
+  isAdmin: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
