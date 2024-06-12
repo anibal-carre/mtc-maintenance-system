@@ -94,6 +94,25 @@ export async function fetchKeyById(id: string) {
   }
 }
 
+export async function fetchProductById(id: string) {
+  noStore();
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id: id },
+    });
+
+    if (product) {
+      console.log(product);
+      return product;
+    } else {
+      console.log("Product not found");
+    }
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch product.");
+  }
+}
+
 export async function fetchUsersPages(query: string) {
   noStore();
 
@@ -181,3 +200,31 @@ export const getUserById = async (id: string) => {
     return user;
   } catch (error) {}
 };
+
+export async function fetchFilteredProducts(
+  query: string,
+  currentPage: number
+) {
+  noStore();
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        OR: [{ name: { contains: query, mode: "insensitive" } }],
+      },
+      orderBy: {
+        name: "desc",
+      },
+      skip: offset,
+      take: ITEMS_PER_PAGE,
+    });
+
+    return products;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch products.");
+  } finally {
+    await prisma.$disconnect();
+  }
+}

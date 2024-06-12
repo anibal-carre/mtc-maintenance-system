@@ -1,15 +1,8 @@
-import {
-  CheckIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-  UserCircleIcon,
-  KeyIcon,
-} from "@heroicons/react/24/outline";
+import { KeyIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Button } from "@/components/button";
 import { fetchKeyById } from "@/lib/data";
 import { updateKey } from "@/lib/actions";
-import { Key } from "@/lib/definitions";
 import { notFound } from "next/navigation";
 
 interface EditKeyFormProps {
@@ -29,9 +22,6 @@ const EditKeyForm: React.FC<EditKeyFormProps> = async ({ id }) => {
   return (
     <form action={updateKeyWithId}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        {/* Customer Name */}
-
-        {/* Invoice Amount */}
         <div className="mb-4">
           <label htmlFor="amount" className="mb-2 block text-sm font-medium">
             Key Name

@@ -1,13 +1,15 @@
-import Form from "@/components/keys/edit-form";
+import Form from "@/components/storage/edit-form";
 import { fetchKeyById } from "@/lib/data";
 import { KeyForm } from "@/lib/definitions";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-type Key = {
+type Product = {
   id: string;
-  key: string;
-  door: string;
+  name: string;
+  quantity: number;
+  buyQuantity: number;
+  stockQuantity: number;
   createdAt: Date;
   updatedAt: Date;
 };

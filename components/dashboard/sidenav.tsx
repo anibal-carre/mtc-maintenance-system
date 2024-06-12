@@ -4,8 +4,14 @@ import NavLinks from "./nav-links";
 import { PowerIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { signOut } from "@/auth";
+import { auth } from "@/auth";
+import { getUserById } from "@/lib/data";
 
-export default function SideNav() {
+export default async function SideNav() {
+  const session = await auth();
+  const user = await getUserById(session?.user?.id as string);
+
+  const isAdmin = user?.isAdmin;
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
       <Link
@@ -24,7 +30,7 @@ export default function SideNav() {
         </div>
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-        <NavLinks />
+        <NavLinks isAdmin={isAdmin} />
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
         <form
           action={async () => {

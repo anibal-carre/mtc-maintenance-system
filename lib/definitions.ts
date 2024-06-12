@@ -23,3 +23,13 @@ export type User = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type Product = {
+  id: string;
+  name: string;
+  quantity: number;
+  buyQuantity: number;
+  stockQuantity: number;
+  createdAt: Date;
+  updatedAt: Date;
+};

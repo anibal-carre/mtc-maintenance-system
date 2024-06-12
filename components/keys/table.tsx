@@ -1,12 +1,7 @@
 import Image from "next/image";
 import { UpdateKey, DeleteKey } from "./buttons";
 
-import {
-  formatDateToLocal,
-  formatCurrency,
-  formatDateToLocalDate,
-  formatDateToLocalTime,
-} from "@/lib/utils";
+import { formatDateToLocalDate } from "@/lib/utils";
 import { fetchFilteredKeys } from "@/lib/data";
 
 export default async function KeysTable({
@@ -111,15 +106,9 @@ export default async function KeysTable({
                     {formatDateToLocalDate(key.createdAt)}
                   </td>
 
-                  {/** <td className="whitespace-nowrap px-3 py-3">
-                    {formatDateToLocalTime(key.createdAt)}
-                  </td>*/}
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatDateToLocalDate(key.updatedAt as Date)}
                   </td>
-                  {/*<td className="whitespace-nowrap px-3 py-3">
-                    {formatDateToLocalTime(key.updatedAt as Date)}
-                  </td> */}
 
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex gap-3">

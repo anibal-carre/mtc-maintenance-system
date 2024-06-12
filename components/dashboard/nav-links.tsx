@@ -10,19 +10,49 @@ import { usePathname } from "next/navigation";
 
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
-const links = [
-  { name: "Home", href: "/dashboard", icon: HomeIcon },
-  { name: "Users", href: "/dashboard/users", icon: UserGroupIcon },
-  {
-    name: "Keys",
-    href: "/dashboard/keys",
-    icon: KeyIcon,
-  },
-  { name: "Storage", href: "/dashboard/storage", icon: CircleStackIcon },
-];
 
-export default function NavLinks() {
+export default function NavLinks({
+  isAdmin,
+}: {
+  isAdmin: boolean | undefined;
+}) {
   const pathname = usePathname();
+
+  let links = [
+    { name: "Home", href: "/dashboard", icon: HomeIcon },
+    { name: "Users", href: "/dashboard/users", icon: UserGroupIcon },
+    {
+      name: "Keys",
+      href: "/dashboard/keys",
+      icon: KeyIcon,
+    },
+    { name: "Storage", href: "/dashboard/storage", icon: CircleStackIcon },
+  ];
+
+  if (isAdmin) {
+    links = [
+      { name: "Home", href: "/dashboard", icon: HomeIcon },
+      { name: "Users", href: "/dashboard/users", icon: UserGroupIcon },
+      {
+        name: "Keys",
+        href: "/dashboard/keys",
+        icon: KeyIcon,
+      },
+      { name: "Storage", href: "/dashboard/storage", icon: CircleStackIcon },
+    ];
+  } else {
+    links = [
+      { name: "Home", href: "/dashboard", icon: HomeIcon },
+
+      {
+        name: "Keys",
+        href: "/dashboard/keys",
+        icon: KeyIcon,
+      },
+      { name: "Storage", href: "/dashboard/storage", icon: CircleStackIcon },
+    ];
+  }
+
   return (
     <>
       {links.map((link) => {

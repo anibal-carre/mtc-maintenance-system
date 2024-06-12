@@ -5,6 +5,9 @@ import { fetchUsersPages } from "@/lib/data";
 import { UsersTableSkeleton } from "@/components/skeletons";
 import Search from "@/components/keys/search";
 import { CreateUser } from "@/components/users/buttons";
+import { auth } from "@/auth";
+import { getUserById } from "@/lib/data";
+import { redirect } from "next/navigation";
 export default async function UsersPage({
   searchParams,
 }: {
@@ -13,6 +16,8 @@ export default async function UsersPage({
     page?: string;
   };
 }) {
+  const session = await auth();
+  const user = await getUserById(session?.user?.id as string);
   const currentPage = Number(searchParams?.page) || 1;
   const query = searchParams?.query || "";
 

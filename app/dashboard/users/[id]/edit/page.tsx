@@ -1,16 +1,6 @@
-import Form from "@/components/keys/edit-form";
-import { fetchKeyById } from "@/lib/data";
-import { KeyForm } from "@/lib/definitions";
-import Image from "next/image";
+import Form from "@/components/users/edit-form";
 import { notFound } from "next/navigation";
 
-type Key = {
-  id: string;
-  key: string;
-  door: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
   console.log(typeof id);

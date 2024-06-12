@@ -53,8 +53,6 @@ export async function createKey(formData: FormData) {
     updatedAt,
   });
 
-  //const rawFormData = Object.fromEntries(formData.entries())
-
   try {
     await prisma.key.create({
       data: {
@@ -66,7 +64,7 @@ export async function createKey(formData: FormData) {
     });
   } catch (error) {
     return {
-      message: "Database Error: Failed to Create Invoice.",
+      message: "Database Error: Failed to Create Key.",
     };
   }
 
@@ -107,9 +105,120 @@ export async function updateKey(id: string, formData: FormData) {
   redirect("/dashboard/keys");
 }
 
+const FormProductSchema = z.object({
+  id: z.string(),
+  name: z.string({
+    invalid_type_error: "Please enter a valid product name",
+  }),
+  quantity: z.number({
+    invalid_type_error: "Please enter a valid quantity",
+  }),
+  buyQuantity: z.number(),
+  stockQuantity: z.number(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+const createProductSchema = FormProductSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export async function createProduct(formData: FormData) {
+  const validatedFields = createProductSchema.safeParse({
+    name: formData.get("name"),
+    quantity: Number(formData.get("quantity")),
+    buyQuantity: Number(formData.get("buyQuantity")),
+    stockQuantity: Number(formData.get("stockQuantity")),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Create Key.",
+    };
+  }
+
+  const { name, quantity, buyQuantity, stockQuantity } = validatedFields.data;
+
+  const createdAt = new Date();
+  const updatedAt = new Date();
+
+  console.log({
+    name,
+    quantity,
+    buyQuantity,
+    stockQuantity,
+    createdAt,
+    updatedAt,
+  });
+
+  try {
+    await prisma.product.create({
+      data: {
+        name,
+        quantity,
+        buyQuantity,
+        stockQuantity,
+        createdAt,
+        updatedAt,
+      },
+    });
+  } catch (error) {
+    return {
+      message: "Database Error: Failed to Create Product.",
+    };
+  }
+
+  revalidatePath("/dashboard/storage");
+  redirect("/dashboard/storage");
+}
+
+const UpdateProduct = FormProductSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export async function updateProduct(id: string, formData: FormData) {
+  const { name, quantity, buyQuantity, stockQuantity } = UpdateProduct.parse({
+    name: formData.get("name"),
+    quantity: Number(formData.get("quantity")),
+    buyQuantity: Number(formData.get("buyQuantity")),
+    stockQuantity: Number(formData.get("stockQuantity")),
+  });
+
+  const updatedAt = new Date();
+
+  try {
+    await db.product.update({
+      where: { id: id },
+      data: {
+        name,
+        quantity,
+        buyQuantity,
+        stockQuantity,
+        updatedAt,
+      },
+    });
+
+    console.log("Product Updated Successfully", {
+      name,
+      quantity,
+      buyQuantity,
+      stockQuantity,
+      updatedAt,
+    });
+  } catch (error) {
+    return { message: "Database Error: Failed to Product Key." };
+  }
+
+  revalidatePath("/dashboard/storage");
+  redirect("/dashboard/storage");
+}
+
 export async function deleteKey(id: string) {
-  // Simulate an error
-  //throw new Error('Failed to Delete Invoice');
   try {
     await db.key.delete({
       where: {
@@ -123,9 +232,21 @@ export async function deleteKey(id: string) {
   }
 }
 
+export async function deleteProduct(id: string) {
+  try {
+    await db.product.delete({
+      where: {
+        id,
+      },
+    });
+    revalidatePath("/dashboard/storage");
+    return { message: "Deleted Product." };
+  } catch (error) {
+    return { message: "Database Error: Failed to Delete Product." };
+  }
+}
+
 export async function deleteUser(id: string) {
-  // Simulate an error
-  //throw new Error('Failed to Delete Invoice');
   try {
     await db.user.delete({
       where: {
@@ -142,6 +263,13 @@ export async function deleteUser(id: string) {
 export const getUserByUsername = async (username: string) => {
   try {
     const user = await db.user.findUnique({ where: { username } });
+    return user;
+  } catch (error) {}
+};
+
+export const getUserById = async (id: string) => {
+  try {
+    const user = await db.user.findUnique({ where: { id } });
     return user;
   } catch (error) {}
 };
@@ -201,8 +329,6 @@ export async function createUser(formData: FormData) {
     updatedAt,
   });
 
-  //const rawFormData = Object.fromEntries(formData.entries())
-
   try {
     await prisma.user.create({
       data: {
@@ -218,6 +344,49 @@ export async function createUser(formData: FormData) {
     return {
       message: "Database Error: Failed to Create User.",
     };
+  }
+
+  revalidatePath("/dashboard/users");
+  redirect("/dashboard/users");
+}
+
+const UpdateUser = UserSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export async function updateUser(id: string, formData: FormData) {
+  const { name, username, password, isAdmin } = UpdateUser.parse({
+    name: formData.get("name"),
+    username: formData.get("username"),
+    password: formData.get("password"),
+    isAdmin: formData.get("isAdmin"),
+  });
+
+  const updatedAt = new Date();
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  try {
+    await db.user.update({
+      where: { id: id },
+      data: {
+        name,
+        username,
+        password: hashedPassword,
+        isAdmin: Boolean(isAdmin),
+        updatedAt,
+      },
+    });
+
+    console.log("User Updated Successfully", {
+      name,
+      username,
+      isAdmin,
+      updatedAt,
+    });
+  } catch (error) {
+    return { message: "Database Error: Failed to User." };
   }
 
   revalidatePath("/dashboard/users");

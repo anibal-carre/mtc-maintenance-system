@@ -1,43 +1,39 @@
-"use client";
-
+import {
+  CheckIcon,
+  ClockIcon,
+  CurrencyDollarIcon,
+  UserCircleIcon,
+  KeyIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
-import { Button } from "../button";
-import { createUser } from "@/lib/actions";
-import { useFormState } from "react-dom";
-import { error } from "console";
-import Image from "next/image";
+import { Button } from "@/components/button";
+import { getUserById } from "@/lib/data";
+import { updateUser } from "@/lib/actions";
 
-export default function Form() {
-  //const initialState = { message: null, errors: {} };
-  //const [state, dispatch] = useFormState(createKey, initialState);
+import { notFound } from "next/navigation";
+
+interface EditUserFormProps {
+  id: string;
+}
+
+const EditUserForm: React.FC<EditUserFormProps> = async ({ id }) => {
+  console.log(id);
+
+  const user = await getUserById(id);
+
+  if (!user) {
+    notFound();
+  }
+
+  const updateUserWithId = updateUser.bind(null, id);
   return (
-    <form action={createUser} aria-describedby="customer-error">
+    <form action={updateUserWithId}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
-        <div className="mb-4">
-          <div className="relative">
-            <Image
-              src={"/key.png"}
-              alt="key-image"
-              className="pointer-events-none absolute left-3 top-1/2 h-[25px] w-[25px] -translate-y-1/2 text-gray-500"
-              width={18}
-              height={18}
-            />
-          </div>
-          <div id="customer-error" aria-live="polite" aria-atomic="true">
-            {/*state.errors?.key &&
-              state.errors.key.map((error: string) => (
-                <p className="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              )) */}
-          </div>
-        </div>
 
         {/* Invoice Amount */}
         <div className="mb-4">
-          <label htmlFor="name" className="mb-2 block text-sm font-medium">
+          <label htmlFor="amount" className="mb-2 block text-sm font-medium">
             Name
           </label>
           <div className="relative mt-2 rounded-md">
@@ -47,20 +43,11 @@ export default function Form() {
                 name="name"
                 type="text"
                 step="0.01"
-                placeholder="Enter name..."
+                defaultValue={user?.name}
+                placeholder="Enter name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                aria-describedby="amount-error"
-                required
               />
               <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-            </div>
-            <div id="amount-error" aria-live="polite" aria-atomic="true">
-              {/* state.errors?.key &&
-                state.errors.key.map((error: string) => (
-                  <p className="mt-2 text-sm text-red-500" key={error}>
-                    {error}
-                  </p>
-                )) */}
             </div>
           </div>
         </div>
@@ -76,20 +63,11 @@ export default function Form() {
                 name="username"
                 type="text"
                 step="0.01"
+                defaultValue={user?.username}
                 placeholder="Enter username"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                aria-describedby="amount-error"
-                required
               />
               <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-            </div>
-            <div id="amount-error" aria-live="polite" aria-atomic="true">
-              {/* state.errors?.key &&
-                state.errors.key.map((error: string) => (
-                  <p className="mt-2 text-sm text-red-500" key={error}>
-                    {error}
-                  </p>
-                )) */}
             </div>
           </div>
         </div>
@@ -105,20 +83,10 @@ export default function Form() {
                 name="password"
                 type="password"
                 step="0.01"
-                placeholder="**********"
+                placeholder="************"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                aria-describedby="amount-error"
-                required
               />
               <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-            </div>
-            <div id="amount-error" aria-live="polite" aria-atomic="true">
-              {/* state.errors?.key &&
-                state.errors.key.map((error: string) => (
-                  <p className="mt-2 text-sm text-red-500" key={error}>
-                    {error}
-                  </p>
-                )) */}
             </div>
           </div>
         </div>
@@ -145,8 +113,6 @@ export default function Form() {
             <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
           </div>
         </div>
-
-        {/* Invoice Status */}
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
@@ -155,8 +121,10 @@ export default function Form() {
         >
           Cancel
         </Link>
-        <Button type="submit">Create User</Button>
+        <Button type="submit">Edit User</Button>
       </div>
     </form>
   );
-}
+};
+
+export default EditUserForm;
